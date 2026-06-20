@@ -10,6 +10,10 @@
 > **AttentionPool** is a lightweight sidecar service that integrates with [Navidrome](https://www.navidrome.org/) to automatically reward creators and listeners with real-time nanopayments on the Arc blockchain (Testnet).
 
 ---
+> 🎯 **Hackathon Context**  
+> Built for the **Lepton Agents Hackathon** (RFB 06 - Creator & Publisher Monetization).  
+> This project proves that **sub-cent payments ($0.000001)** are now economically viable on Arc.  
+> During testing, **20+ real transactions** were successfully settled on Arc Testnet, demonstrating instant nanopayments for every track played.
 
 ## 📖 Table of Contents
 
