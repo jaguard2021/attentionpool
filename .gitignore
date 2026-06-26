@@ -1,3 +1,61 @@
+# =============================================
+# ATTENTIONPOOL - FINAL .gitignore
+# =============================================
+
+# Environment variables (SENSITIVE!)
 .env
+.env.local
+.env.*.local
+
+# Node.js dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Personal data (history & registries)
 plays.json
+plays_full.json
+artists.json
+listeners.json
+
+# Cache and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.iml
+
+# Backup files
+*.bak
+*.old
+*.orig
+
+# Build output
+dist/
+build/
+out/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arc / Circle CLI cache
+.arc-canteen/
+*.arc-canteen
+
+# =============================================
+# FILES TO KEEP IN REPO (DO NOT IGNORE)
+# =============================================
+# .env.example             ✅ PUSH (template)
+# artists.example.json     ✅ PUSH (optional template)
+# listeners.example.json   ✅ PUSH (optional template)

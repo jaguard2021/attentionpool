@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AttentionPool - Verified Attention Infrastructure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: #0b0e14; color: #eef2f8; min-height: 100vh; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid #1f2a3a; flex-wrap: wrap; gap: 1rem; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #a0c0ff, #6ee7b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+        .nav a { color: #8a9bb5; text-decoration: none; font-size: 0.9rem; }
+        .nav a:hover { color: #eef2f8; }
+        .nav .btn-nav { background: #6ee7b7; color: #0b0e14; padding: 0.5rem 1.2rem; border-radius: 40px; font-weight: 600; font-size: 0.85rem; }
+        .nav .btn-nav:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(110, 231, 183, 0.2); color: #0b0e14; }
+
+        /* HERO — NARASI BARU */
+        .hero { padding: 4rem 0 2rem; text-align: center; }
+        .hero .badge { display: inline-block; background: #1a2a44; color: #7bb3ff; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.04em; }
+        .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 span { background: linear-gradient(135deg, #7bb3ff, #6ee7b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero .subtitle { font-size: 1.3rem; color: #8a9bb5; max-width: 700px; margin: 0 auto 0.5rem; }
+        .hero .subtitle strong { color: #eef2f8; }
+        .hero .tagline { font-size: 1rem; color: #6c819e; max-width: 600px; margin: 0.5rem auto 2rem; }
+        .hero .btn-primary { display: inline-block; background: #6ee7b7; color: #0b0e14; font-weight: 600; padding: 0.8rem 2.5rem; border-radius: 40px; text-decoration: none; transition: 0.3s; border: none; cursor: pointer; font-size: 1rem; }
+        .hero .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(110, 231, 183, 0.25); }
+
+        /* MISSION STATEMENT — BARU */
+        .mission { padding: 1rem 0 2rem; text-align: center; border-top: 1px solid #1a2535; border-bottom: 1px solid #1a2535; margin: 0.5rem 0 1.5rem; }
+        .mission p { color: #8a9bb5; max-width: 750px; margin: 0 auto; font-size: 1.05rem; line-height: 1.7; }
+        .mission strong { color: #eef2f8; }
+
+        /* STATS */
+        .stats { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin: 2rem 0; }
+        .stat-item { text-align: center; }
+        .stat-item .number { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #7bb3ff, #6ee7b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-item .label { color: #8a9bb5; font-size: 0.9rem; }
+
+        .section { padding: 3rem 0; }
+        .section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 2rem; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 1.5rem; }
+        .feature-card { background: #131a24; border-radius: 1rem; padding: 1.5rem; border: 1px solid #1f2a3a; }
+        .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .feature-card p { color: #8a9bb5; font-size: 0.95rem; }
+
+        /* ARCHITECTURE */
+        .arch-flow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.8rem; margin: 2rem 0; }
+        .arch-box { background: #131a24; border: 1px solid #1f2a3a; border-radius: 0.75rem; padding: 0.8rem 1.5rem; text-align: center; min-width: 100px; }
+        .arch-box .icon { font-size: 1.5rem; display: block; margin-bottom: 0.2rem; }
+        .arch-box .label { font-size: 0.8rem; color: #8a9bb5; }
+        .arch-arrow { color: #4d5f78; font-size: 1.2rem; }
+
+        /* WHY IT MATTERS */
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 1.5rem; }
+        .why-card { background: #131a24; border-radius: 1rem; padding: 1.5rem; border: 1px solid #1f2a3a; text-align: center; }
+        .why-card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .why-card h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .why-card p { color: #8a9bb5; font-size: 0.9rem; }
+
+        /* FUTURE INTEGRATIONS */
+        .future-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .future-card { background: #131a24; border-radius: 0.75rem; padding: 1.2rem; border: 1px solid #1f2a3a; text-align: center; }
+        .future-card .icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+        .future-card h5 { font-size: 1rem; margin-bottom: 0.2rem; }
+        .future-card p { color: #8a9bb5; font-size: 0.8rem; }
+
+        /* REGISTRY FORM */
+        .registry-form { background: #131a24; border-radius: 1rem; padding: 2rem; border: 1px solid #1f2a3a; max-width: 500px; margin: 0 auto; }
+        .registry-form input { width: 100%; padding: 0.8rem; margin-bottom: 1rem; background: #0b0e14; border: 1px solid #1f2a3a; border-radius: 0.5rem; color: #eef2f8; }
+        .registry-form input:focus { outline: none; border-color: #6ee7b7; }
+        .registry-form .btn { width: 100%; display: inline-block; background: #6ee7b7; color: #0b0e14; font-weight: 600; padding: 0.8rem; border-radius: 40px; border: none; cursor: pointer; font-size: 1rem; }
+        .registry-form .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(110, 231, 183, 0.2); }
+
+        .tab { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
+        .tab button { background: #1f2a3a; border: none; padding: 0.5rem 1.5rem; border-radius: 20px; color: #8a9bb5; cursor: pointer; }
+        .tab button.active { background: #6ee7b7; color: #0b0e14; font-weight: 600; }
+        .form-container { display: none; }
+        .form-container.active { display: block; }
+
+        .table-wrap { background: #131a24; border-radius: 1rem; padding: 1.5rem; border: 1px solid #1f2a3a; overflow-x: auto; }
+        .table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 700px; }
+        .table-wrap th { text-align: left; padding: 0.5rem; border-bottom: 1px solid #1f2a3a; color: #8a9bb5; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; }
+        .table-wrap td { padding: 0.5rem; border-bottom: 1px solid #1a2535; vertical-align: middle; }
+        .table-wrap .hash { font-family: monospace; font-size: 0.7rem; }
+        .table-wrap .hash a { color: #7bb3ff; text-decoration: none; }
+        .table-wrap .hash a:hover { text-decoration: underline; }
+        .badge-creator { color: #7bb3ff; }
+        .badge-listener { color: #6ee7b7; }
+        .tx-link { color: #7bb3ff; text-decoration: none; font-family: monospace; font-size: 0.7rem; }
+        .tx-link:hover { text-decoration: underline; }
+
+        .footer { border-top: 1px solid #1f2a3a; padding: 2rem 0; margin-top: 2rem; text-align: center; color: #4d5f78; font-size: 0.85rem; }
+        .footer a { color: #6e8bb0; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        .success { color: #6ee7b7; padding: 0.5rem; border-radius: 0.5rem; background: #0f2a1f; margin-top: 0.5rem; }
+        .error { color: #ff6b6b; padding: 0.5rem; border-radius: 0.5rem; background: #2a0f0f; margin-top: 0.5rem; }
+
+        @media (max-width: 600px) { .hero h1 { font-size: 2rem; } .header { flex-direction: column; align-items: stretch; } .nav { justify-content: center; } .stats { gap: 1.5rem; } .arch-flow { flex-direction: column; } .arch-arrow { transform: rotate(90deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">🎧 AttentionPool</div>
+        <nav class="nav">
+            <a href="#features">Features</a>
+            <a href="#register">Register</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="https://github.com/jaguard2021/attentionpool" target="_blank">GitHub</a>
+            <a href="#register" class="btn-nav">Go →</a>
+        </nav>
+    </header>
+
+    <!-- HERO — NARASI BARU: VERIFIED ATTENTION INFRASTRUCTURE -->
+    <section class="hero">
+        <div class="badge">🎯 Built for Lepton Agents Hackathon — RFB 06</div>
+        <h1>Verified Attention <span>Infrastructure</span></h1>
+        <p class="subtitle">Automatically reward creators and users for <strong>genuine engagement</strong> — starting with music, expanding to all open-source content.</p>
+        <p class="tagline">No bots. No seek. No spam. Only verified attention.</p>
+        <a href="#register" class="btn-primary">🎵 Join the Network</a>
+    </section>
+
+    <!-- MISSION STATEMENT — BARU -->
+    <section class="mission">
+        <p>
+            AttentionPool is not just a music royalty system. It's a <strong>Verified Attention Infrastructure</strong>
+            — a protocol that verifies real engagement and automatically distributes micropayments.
+            Music on <strong>Navidrome</strong> is the first implementation.
+            <strong>Podcasts, audiobooks, and video</strong> are next.
+        </p>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-item"><div class="number" id="totalPlays">0</div><div class="label">Total Plays Verified</div></div>
+        <div class="stat-item"><div class="number" id="totalArtists">0</div><div class="label">Artists Registered</div></div>
+        <div class="stat-item"><div class="number" id="totalListeners">0</div><div class="label">Listeners Registered</div></div>
+        <div class="stat-item"><div class="number" id="totalPaid">0</div><div class="label">USDC Paid</div></div>
+    </div>
+
+    <!-- WHY IT MATTERS -->
+    <section class="section" id="why">
+        <h2 class="section-title">Why It Matters</h2>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="icon">🎯</div>
+                <h4>Reward Attention, Not Clicks</h4>
+                <p>Most streaming platforms reward clicks. AttentionPool rewards attention — a payment is only released after verified completion.</p>
+            </div>
+            <div class="why-card">
+                <div class="icon">🛡️</div>
+                <h4>Anti-Bot, Anti-Seek, Anti-Spam</h4>
+                <p>Every play is validated: duration check, seek detection, daily limits, and cooldowns ensure genuine engagement.</p>
+            </div>
+            <div class="why-card">
+                <div class="icon">💰</div>
+                <h4>Fair Split: 70% / 30%</h4>
+                <p>Artists earn 70% royalty. Listeners earn 30% incentive. Both benefit from verified attention.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="architecture">
+        <h2 class="section-title">How It Works</h2>
+        <div class="arch-flow">
+            <div class="arch-box"><span class="icon">👤</span><span class="label">Listener</span></div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-box"><span class="icon">🎵</span><span class="label">Navidrome</span></div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-box"><span class="icon">🤖</span><span class="label">AttentionPool</span></div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-box"><span class="icon">🛡️</span><span class="label">Anti-Bot Filters</span></div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-box"><span class="icon">⛓️</span><span class="label">Arc Payments</span></div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-box"><span class="icon">🎤</span><span class="label">Artist + Listener</span></div>
+        </div>
+        <p style="text-align:center;color:#8a9bb5;font-size:0.9rem;max-width:700px;margin:0 auto;">
+            ✅ Verified listening → ✅ Anti-bot checks → ✅ Automatic USDC settlement on Arc
+        </p>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+        <h2 class="section-title">✨ Core Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🎵 Verified Listening</h3>
+                <p>Only completed listens (≥90%) are counted. Anti-bot, anti-seek, anti-spam filters protect the system.</p>
+            </div>
+            <div class="feature-card">
+                <h3>💰 Split Payment</h3>
+                <p>70% royalty to the artist, 30% incentive to the listener — automatically distributed on Arc.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🌐 Open Registry</h3>
+                <p>Artists and listeners can self-register their wallets. No central authority required.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FUTURE INTEGRATIONS -->
+    <section class="section" id="future">
+        <h2 class="section-title">🚀 Future Integrations</h2>
+        <p style="text-align:center;color:#8a9bb5;max-width:600px;margin:0 auto 1.5rem;">
+            AttentionPool is <strong>Verified Attention Infrastructure</strong> — music is just the first use case.
+        </p>
+        <div class="future-grid">
+            <div class="future-card">
+                <span class="icon">🎙️</span>
+                <h5>Podcast Rewards</h5>
+                <p>Pay per episode listened</p>
+            </div>
+            <div class="future-card">
+                <span class="icon">📖</span>
+                <h5>Audiobook Royalties</h5>
+                <p>Pay per chapter consumed</p>
+            </div>
+            <div class="future-card">
+                <span class="icon">📻</span>
+                <h5>Radio & Live Streams</h5>
+                <p>Pay per minute of presence</p>
+            </div>
+            <div class="future-card">
+                <span class="icon">🐘</span>
+                <h5>Mastodon Creators</h5>
+                <p>Reward for posts & reposts</p>
+            </div>
+            <div class="future-card">
+                <span class="icon">🎵</span>
+                <h5>MusicBrainz Integration</h5>
+                <p>Automatic artist wallet registry</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section class="section" id="register">
+        <h2 class="section-title">📝 Register Your Wallet</h2>
+
+        <div class="tab">
+            <button class="active" onclick="showTab('artist-form')">🎤 Artist</button>
+            <button onclick="showTab('listener-form')">👤 Listener</button>
+        </div>
+
+        <div id="artist-form" class="form-container active">
+            <div class="registry-form">
+                <h3 style="margin-bottom:1rem;">Register as Artist</h3>
+                <input type="text" id="artistName" placeholder="Artist Name (e.g. Denny Caknan)" />
+                <input type="text" id="artistWallet" placeholder="Wallet Address (0x...)" />
+                <button class="btn" onclick="registerArtist()">Register Artist</button>
+                <div id="artistResult"></div>
+            </div>
+        </div>
+
+        <div id="listener-form" class="form-container">
+            <div class="registry-form">
+                <h3 style="margin-bottom:1rem;">Register as Listener</h3>
+                <input type="text" id="listenerUsername" placeholder="Username (e.g. jaguar)" />
+                <input type="text" id="listenerWallet" placeholder="Wallet Address (0x...)" />
+                <button class="btn" onclick="registerListener()">Register Listener</button>
+                <div id="listenerResult"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="section" id="dashboard">
+        <h2 class="section-title">📊 Dashboard</h2>
+        <div class="table-wrap">
+            <h3 style="margin-bottom:1rem;">Recent Transactions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Track</th>
+                        <th>Artist</th>
+                        <th>Creator (70%)</th>
+                        <th>Listener (30%)</th>
+                        <th>Tx Creator</th>
+                        <th>Tx Listener</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                    <tr><td colspan="7" style="text-align:center;padding:1rem;color:#8a9bb5;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>🚀 Built for <strong>Lepton Agents Hackathon</strong> · <a href="https://github.com/jaguard2021/attentionpool" target="_blank">GitHub</a></p>
+        <p style="margin-top:0.5rem;font-size:0.75rem;">Built with ❤️ by <a href="https://github.com/jaguard2021" target="_blank">jaguard2021</a></p>
+    </footer>
+
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.form-container').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab button').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`.tab button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+
+    async function registerArtist() {
+        const name = document.getElementById('artistName').value.trim();
+        const wallet = document.getElementById('artistWallet').value.trim();
+        const resultDiv = document.getElementById('artistResult');
+        if (!name || !wallet) { resultDiv.innerHTML = '<div class="error">❌ Artist name and wallet are required.</div>'; return; }
+        try {
+            const res = await fetch('/api/register-artist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ artist: name, wallet })
+            });
+            const data = await res.json();
+            if (data.success) {
+                resultDiv.innerHTML = `<div class="success">✅ ${data.message}</div>`;
+                document.getElementById('artistName').value = '';
+                document.getElementById('artistWallet').value = '';
+                updateStats();
+            } else {
+                resultDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+            }
+        } catch {
+            resultDiv.innerHTML = '<div class="error">❌ Server error. Make sure registry-server.js is running on port 3001.</div>';
+        }
+    }
+
+    async function registerListener() {
+        const username = document.getElementById('listenerUsername').value.trim();
+        const wallet = document.getElementById('listenerWallet').value.trim();
+        const resultDiv = document.getElementById('listenerResult');
+        if (!username || !wallet) { resultDiv.innerHTML = '<div class="error">❌ Username and wallet are required.</div>'; return; }
+        try {
+            const res = await fetch('/api/register-listener', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, wallet })
+            });
+            const data = await res.json();
+            if (data.success) {
+                resultDiv.innerHTML = `<div class="success">✅ ${data.message}</div>`;
+                document.getElementById('listenerUsername').value = '';
+                document.getElementById('listenerWallet').value = '';
+                updateStats();
+            } else {
+                resultDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+            }
+        } catch {
+            resultDiv.innerHTML = '<div class="error">❌ Server error. Make sure registry-server.js is running on port 3001.</div>';
+        }
+    }
+
+    async function updateStats() {
+        try {
+            const [artistsRes, listenersRes, statsRes] = await Promise.all([
+                fetch('/api/artists'),
+                fetch('/api/listeners'),
+                fetch('/api/stats')
+            ]);
+            const artists = await artistsRes.json();
+            const listeners = await listenersRes.json();
+            const stats = await statsRes.json();
+            document.getElementById('totalArtists').textContent = artists.length;
+            document.getElementById('totalListeners').textContent = listeners.length;
+            document.getElementById('totalPlays').textContent = stats.totalPlays || 0;
+            document.getElementById('totalPaid').textContent = stats.totalPaid || '0';
+        } catch {}
+    }
+
+    async function loadDashboard() {
+        try {
+            const res = await fetch('/api/history');
+            const history = await res.json();
+            const table = document.getElementById('historyTable');
+            if (history.length === 0) {
+                table.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:1rem;color:#8a9bb5;">No transactions yet.</td></tr>';
+                return;
+            }
+            const recent = history.slice(-10).reverse();
+            table.innerHTML = recent.map(h => `
+                <tr>
+                    <td style="font-size:0.7rem;white-space:nowrap;">${new Date(h.timestamp).toLocaleString()}</td>
+                    <td>${h.title || 'Unknown'}</td>
+                    <td>${h.artist || 'Unknown'}</td>
+                    <td class="badge-creator">${h.amountCreator || '0'} USDC</td>
+                    <td class="badge-listener">${h.amountListener || '0'} USDC</td>
+                    <td class="hash"><a href="https://testnet.arcscan.app/tx/${h.txCreator}" target="_blank" class="tx-link">${h.txCreator ? h.txCreator.slice(0,12)+'...' : 'N/A'}</a></td>
+                    <td class="hash"><a href="https://testnet.arcscan.app/tx/${h.txListener}" target="_blank" class="tx-link">${h.txListener ? h.txListener.slice(0,12)+'...' : 'N/A'}</a></td>
+                </tr>
+            `).join('');
+        } catch {}
+    }
+
+    updateStats();
+    loadDashboard();
+    setInterval(() => { updateStats(); loadDashboard(); }, 30000);
+</script>
+
+</body>
+</html>
