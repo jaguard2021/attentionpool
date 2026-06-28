@@ -405,6 +405,15 @@ git push origin feature/amazing-feature
 
 ---
 
+## 🧠 Known Limitations
+
+This is a hackathon prototype. The following are intentional trade-offs:
+
+- **File-based storage** — `artists.json`, `listeners.json`, `plays_full.json` are read/written synchronously. For production, a database is recommended.
+- **No authentication** — Anyone can register an artist or listener. In production, wallet signature verification (e.g., `personal_sign`) should be added.
+- **History grows indefinitely** — `plays_full.json` accumulates all transactions. For long-term use, partition by month or use a database.
+- **Race conditions** — Concurrent writes to JSON files can cause data loss. For demo purposes, this is acceptable.
+
 # 📜 License
 
 This project is licensed under the MIT License.
