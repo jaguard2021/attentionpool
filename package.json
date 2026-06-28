@@ -1,19 +1,16 @@
 {
   "name": "attentionpool",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Verified Attention Infrastructure for open music communities",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "registry": "node registry-server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "axios": "^1.18.0",
-    "dotenv": "^17.4.2",
-    "ethers": "^6.17.0",
-    "express": "^5.2.1"
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.0",
+    "ethers": "^6.13.0",
+    "express": "^4.19.2"
   }
 }
