@@ -15,14 +15,12 @@ const CONFIG = {
     IDLE_TIMEOUT: 30,
 };
 
-// === STATE PER USER ===
+// === PER-USER STATE ===
 const userStates = {};
 
 function getState(username) {
-    // Ensure username is a string
-    const key = username || 'unknown';
-    if (!userStates[key]) {
-        userStates[key] = {
+    if (!userStates[username]) {
+        userStates[username] = {
             currentTrack: null,
             currentTrackProgress: 0,
             trackStartTime: null,
@@ -30,7 +28,7 @@ function getState(username) {
             seekNotified: false,
         };
     }
-    return userStates[key];
+    return userStates[username];
 }
 
 function getActiveUsers() {
@@ -200,20 +198,12 @@ function resetTrackState(username) {
     state.seekNotified = false;
 }
 
+// === LAYER 1: PROCESS TRACK (reject short tracks immediately) ===
 async function processTrack(walletAddress, track, username) {
-    // DEBUG: log received username
-    console.log(`🔍 DEBUG processTrack: received username = ${username}, track.username = ${track?.username}`);
-
-    // Ensure we have a valid username
-    const finalUsername = username || track.username || 'unknown';
-    if (finalUsername !== username) {
-        console.log(`   📌 Username resolved: ${finalUsername}`);
-    }
-
-    const state = getState(finalUsername);
     const results = [];
+    const state = getState(username);
     const trackId = track.id || `${track.artist}-${track.title}`;
-    const trackKey = getTrackKey(finalUsername, trackId);
+    const trackKey = getTrackKey(username, trackId);
     const trackTitle = track.title || track.name || 'Unknown';
     const artist = track.artist || 'Unknown Artist';
     const position = getCurrentPosition(track);
@@ -222,18 +212,33 @@ async function processTrack(walletAddress, track, username) {
 
     resetCaches();
 
-    if (finalizedTracks.has(trackKey)) {
-        console.log(`   ⏳ Track "${trackTitle}" already finalized for user ${finalUsername}, skipping.`);
+    // --- EARLY REJECTION: Short tracks ---
+    if (totalDuration > 0 && totalDuration < CONFIG.MIN_DURATION) {
+        console.log(
+            `   ⛔ Track "${trackTitle}" too short (${totalDuration}s < ${CONFIG.MIN_DURATION}s)`
+        );
+        finalizedTracks.add(trackKey);
         return {
             passed: false,
-            results: [`⏳ Track already finalized for ${finalUsername}, skipping.`],
+            results: [
+                `⛔ Track rejected: duration ${totalDuration}s below minimum ${CONFIG.MIN_DURATION}s`
+            ],
+            filter: 'track_too_short'
+        };
+    }
+
+    if (finalizedTracks.has(trackKey)) {
+        console.log(`   ⏳ Track "${trackTitle}" already finalized for user ${username}, skipping.`);
+        return {
+            passed: false,
+            results: [`⏳ Track already finalized for ${username}, skipping.`],
             filter: 'already_finalized'
         };
     }
 
     if (seekInvalidatedTracks.has(trackKey)) {
         if (!state.seekNotified) {
-            console.log(`   ⛔ Track "${trackTitle}" invalidated by previous seek for user ${finalUsername}.`);
+            console.log(`   ⛔ Track "${trackTitle}" invalidated by previous seek for user ${username}.`);
             state.seekNotified = true;
         }
         return {
@@ -255,26 +260,26 @@ async function processTrack(walletAddress, track, username) {
 
         if (state.currentTrack && isTrackCompleted(state.currentTrack)) {
             const prevTrackId = state.currentTrack.id || `${state.currentTrack.artist}-${state.currentTrack.title}`;
-            const prevTrackKey = getTrackKey(finalUsername, prevTrackId);
+            const prevTrackKey = getTrackKey(username, prevTrackId);
             const prevTitle = state.currentTrack.title || state.currentTrack.name || 'Unknown';
             const prevArtist = state.currentTrack.artist || 'Unknown Artist';
 
             if (seekInvalidatedTracks.has(prevTrackKey)) {
-                console.log(`   ⛔ Track "${prevTitle}" invalidated by previous seek for ${finalUsername}.`);
+                console.log(`   ⛔ Track "${prevTitle}" invalidated by previous seek for ${username}.`);
                 seekInvalidatedTracks.delete(prevTrackKey);
                 state.currentTrack = track;
                 state.currentTrackProgress = progress;
                 state.trackStartTime = Date.now();
                 return {
                     passed: false,
-                    results: [`⛔ Track invalid due to previous seek for ${finalUsername}.`],
+                    results: [`⛔ Track invalid due to previous seek for ${username}.`],
                     filter: 'seek_invalidated'
                 };
             }
 
             console.log(`   ✅ Track "${prevTitle}" completed (${Math.round(state.currentTrackProgress * 100)}%) — processing reward...`);
 
-            const dailyCheck = checkDailyLimit(finalUsername);
+            const dailyCheck = checkDailyLimit(username);
             results.push(dailyCheck.reason || `Plays remaining today: ${dailyCheck.remaining}`);
             if (!dailyCheck.passed) {
                 state.currentTrack = track;
@@ -283,7 +288,7 @@ async function processTrack(walletAddress, track, username) {
                 return { passed: false, results, filter: 'daily_limit' };
             }
 
-            const trackLimitCheck = checkTrackLimit(finalUsername, prevTrackId, prevTitle);
+            const trackLimitCheck = checkTrackLimit(username, prevTrackId, prevTitle);
             results.push(trackLimitCheck.reason);
             if (!trackLimitCheck.passed) {
                 state.currentTrack = track;
@@ -292,7 +297,7 @@ async function processTrack(walletAddress, track, username) {
                 return { passed: false, results, filter: 'track_limit' };
             }
 
-            const intervalCheck = checkInterval(finalUsername);
+            const intervalCheck = checkInterval(username);
             results.push(intervalCheck.reason);
             if (!intervalCheck.passed) {
                 state.currentTrack = track;
@@ -310,7 +315,7 @@ async function processTrack(walletAddress, track, username) {
                 return { passed: false, results, filter: 'passport' };
             }
 
-            recordPlay(walletAddress, prevTitle, prevArtist, prevTrackId, finalUsername);
+            recordPlay(walletAddress, prevTitle, prevArtist, prevTrackId, username);
             results.push(`✅ All filters passed! (${trackLimitCheck.count + 1}/${CONFIG.MAX_REWARD_PER_TRACK_PER_DAY} for this track today)`);
 
             finalizedTracks.add(prevTrackKey);
@@ -326,7 +331,7 @@ async function processTrack(walletAddress, track, username) {
                 const prevTitle = state.currentTrack.title || state.currentTrack.name || 'Unknown';
                 console.log(`   ⏳ Track "${prevTitle}" not completed (${Math.round(state.currentTrackProgress * 100)}%) — reward cancelled.`);
                 const prevTrackId = state.currentTrack.id || `${state.currentTrack.artist}-${state.currentTrack.title}`;
-                const prevTrackKey = getTrackKey(finalUsername, prevTrackId);
+                const prevTrackKey = getTrackKey(username, prevTrackId);
                 seekInvalidatedTracks.delete(prevTrackKey);
             }
             state.currentTrack = track;
@@ -338,15 +343,15 @@ async function processTrack(walletAddress, track, username) {
 
     // Same track: check seek
     const currentPosition = getCurrentPosition(track);
-    console.log(`   🐞 DEBUG position=${currentPosition}s last=${state.lastDuration}s (user: ${finalUsername})`);
+    console.log(`   🐞 DEBUG position=${currentPosition}s last=${state.lastDuration}s (user: ${username})`);
     if (state.lastDuration > 0) {
         const jump = currentPosition - state.lastDuration;
         if (jump > CONFIG.MAX_DURATION_JUMP) {
-            console.log(`   ⚠️ SEEK DETECTED! ${state.lastDuration}s -> ${currentPosition}s (jump: ${jump}s) (user: ${finalUsername})`);
+            console.log(`   ⚠️ SEEK DETECTED! ${state.lastDuration}s -> ${currentPosition}s (jump: ${jump}s) (user: ${username})`);
             state.lastDuration = currentPosition;
-            const invalidKey = getTrackKey(finalUsername, trackId);
+            const invalidKey = getTrackKey(username, trackId);
             seekInvalidatedTracks.add(invalidKey);
-            console.log(`   ⛔ Track "${trackTitle}" marked as invalid due to seek for ${finalUsername}.`);
+            console.log(`   ⛔ Track "${trackTitle}" marked as invalid due to seek for ${username}.`);
             state.seekNotified = true;
             state.currentTrack = track;
             state.currentTrackProgress = progress;
@@ -371,39 +376,46 @@ async function processTrack(walletAddress, track, username) {
     };
 }
 
-// === FINALIZE TRACK ON IDLE (PER USER) ===
+// === LAYER 2: FINALIZE TRACK ON IDLE (safety net for short tracks) ===
 async function finalizeTrackOnIdle(walletAddress, track, username) {
     if (!track) return null;
-    const finalUsername = username || track.username || 'unknown';
-    const state = getState(finalUsername);
+    const state = getState(username);
     const trackId = track.id || `${track.artist}-${track.title}`;
-    const trackKey = getTrackKey(finalUsername, trackId);
+    const trackKey = getTrackKey(username, trackId);
     const trackTitle = track.title || track.name || 'Unknown';
     const artist = track.artist || 'Unknown Artist';
+    const duration = getTotalDuration(track);
+
+    // Safety net: reject short tracks in case they bypassed processTrack
+    if (duration > 0 && duration < CONFIG.MIN_DURATION) {
+        console.log(
+            `   ⛔ Track "${trackTitle}" duration ${duration}s below minimum ${CONFIG.MIN_DURATION}s (idle safety)`
+        );
+        return null;
+    }
 
     if (finalizedTracks.has(trackKey)) {
-        console.log(`   ⏳ Track "${trackTitle}" already finalized for ${finalUsername}, skipping.`);
+        console.log(`   ⏳ Track "${trackTitle}" already finalized for ${username}, skipping.`);
         return null;
     }
 
     if (seekInvalidatedTracks.has(trackKey)) {
-        console.log(`   ⛔ Track "${trackTitle}" invalidated by previous seek for ${finalUsername}.`);
+        console.log(`   ⛔ Track "${trackTitle}" invalidated by previous seek for ${username}.`);
         return null;
     }
 
     const position = getCurrentPosition(track);
-    const duration = getTotalDuration(track);
     let isComplete = false;
 
     if (duration > 0) {
         const remaining = duration - position;
-        if (remaining <= 10) {
-            console.log(`   ✅ Track assumed completed (${remaining}s remaining before idle) (user: ${finalUsername})`);
+        if (duration >= CONFIG.MIN_DURATION && remaining <= 10) {
+            console.log(`   ✅ Track assumed completed (${remaining}s remaining before idle) (user: ${username})`);
             isComplete = true;
         } else if ((position / duration) >= CONFIG.COMPLETION_THRESHOLD) {
             isComplete = true;
         } else {
-            console.log(`   ⏳ Track not completed (${Math.round(position/duration*100)}%) — not finalizing. (user: ${finalUsername})`);
+            console.log(`   ⏳ Track not completed (${Math.round(position/duration*100)}%) — not finalizing. (user: ${username})`);
             return null;
         }
     } else {
@@ -419,21 +431,21 @@ async function finalizeTrackOnIdle(walletAddress, track, username) {
         return null;
     }
 
-    console.log(`   ✅ Track "${trackTitle}" auto-finalized (idle timeout) (user: ${finalUsername}).`);
+    console.log(`   ✅ Track "${trackTitle}" auto-finalized (idle timeout) (user: ${username}).`);
 
-    const dailyCheck = checkDailyLimit(finalUsername);
+    const dailyCheck = checkDailyLimit(username);
     if (!dailyCheck.passed) {
         console.log(`   ⛔ ${dailyCheck.reason}`);
         return null;
     }
 
-    const trackLimitCheck = checkTrackLimit(finalUsername, trackId, trackTitle);
+    const trackLimitCheck = checkTrackLimit(username, trackId, trackTitle);
     if (!trackLimitCheck.passed) {
         console.log(`   ⛔ ${trackLimitCheck.reason}`);
         return null;
     }
 
-    const intervalCheck = checkInterval(finalUsername);
+    const intervalCheck = checkInterval(username);
     if (!intervalCheck.passed) {
         console.log(`   ⛔ ${intervalCheck.reason}`);
         return null;
@@ -445,12 +457,12 @@ async function finalizeTrackOnIdle(walletAddress, track, username) {
         return null;
     }
 
-    recordPlay(walletAddress, trackTitle, artist, trackId, finalUsername);
+    recordPlay(walletAddress, trackTitle, artist, trackId, username);
     console.log(`   ✅ All filters passed! (${trackLimitCheck.count + 1}/${CONFIG.MAX_REWARD_PER_TRACK_PER_DAY} for this track today)`);
 
     finalizedTracks.add(trackKey);
     seekInvalidatedTracks.delete(trackKey);
-    resetTrackState(finalUsername);
+    resetTrackState(username);
 
     return { passed: true, trackTitle, artist, trackId };
 }
@@ -465,7 +477,7 @@ module.exports = {
     resetIdleCounter,
     getUTCDate,
     getCurrentTrack: (username) => {
-        const state = getState(username || 'unknown');
+        const state = getState(username);
         return state.currentTrack;
     },
     getActiveUsers,

@@ -1,21 +1,5 @@
 [
   {
-    "trackId": "crypto_midnight_rain_001",
-    "title": "Midnight Rain",
-    "artist": "Luna Waves",
-    "artistWallet": "0x14b946D45Ec8AE364c0C499A00876A215483b525",
-    "registered": true,
-    "registeredAt": "2026-06-28T10:00:00.000Z"
-  },
-  {
-    "trackId": "crypto_silent_horizon_002",
-    "title": "Silent Horizon",
-    "artist": "Luna Waves",
-    "artistWallet": "0x14b946D45Ec8AE364c0C499A00876A215483b525",
-    "registered": true,
-    "registeredAt": "2026-06-28T10:01:00.000Z"
-  },
-  {
     "trackId": "crypto_city_lights_003",
     "title": "City Lights",
     "artist": "Aria Bloom",
@@ -54,5 +38,69 @@
     "artistWallet": "0x91F2C8ADCb3C1654e49FF15A2aC2C2953C7D0fc7",
     "registered": true,
     "registeredAt": "2026-06-28T10:06:00.000Z"
+  },
+  {
+    "trackId": "crypto_echoes_dark_008",
+    "title": "Echoes in the Dark",
+    "artist": "Luna Waves",
+    "artistWallet": "0x14b946D45Ec8AE364c0C499A00876A215483b525",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:00:00.000Z"
+  },
+  {
+    "trackId": "crypto_fading_moonlight_009",
+    "title": "Fading Moonlight",
+    "artist": "Luna Waves",
+    "artistWallet": "0x14b946D45Ec8AE364c0C499A00876A215483b525",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:01:00.000Z"
+  },
+  {
+    "trackId": "crypto_golden_hour_010",
+    "title": "Golden Hour",
+    "artist": "Aria Bloom",
+    "artistWallet": "0x4E33a1d3EB46D12467b36136845eF2E1d20Bb8c7",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:02:00.000Z"
+  },
+  {
+    "trackId": "crypto_palm_tree_dreams_011",
+    "title": "Palm Tree Dreams",
+    "artist": "Aria Bloom",
+    "artistWallet": "0x4E33a1d3EB46D12467b36136845eF2E1d20Bb8c7",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:03:00.000Z"
+  },
+  {
+    "trackId": "crypto_wildfire_sky_012",
+    "title": "Wildfire Sky",
+    "artist": "Kai Hunter",
+    "artistWallet": "0x91F2C8ADCb3C1654e49FF15A2aC2C2953C7D0fc7",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:04:00.000Z"
+  },
+  {
+    "trackId": "crypto_silent_glacier_013",
+    "title": "Silent Glacier",
+    "artist": "Kai Hunter",
+    "artistWallet": "0x91F2C8ADCb3C1654e49FF15A2aC2C2953C7D0fc7",
+    "registered": true,
+    "registeredAt": "2026-06-29T10:05:00.000Z"
+  },
+  {
+    "trackId": "crypto_sound_on_014",
+    "title": "Sound On",
+    "artist": "Ethan Rivers",
+    "artistWallet": "0x4035Cd13743905e4f637845494cfd7877F3095ce",
+    "registered": true,
+    "registeredAt": "2026-06-29T12:00:00.000Z"
+  },
+  {
+    "trackId": "bc9cf025ef6534bbd633a251",
+    "title": "Midnight Rain",
+    "artist": "Luna Waves",
+    "artistWallet": "0x14b946D45Ec8AE364c0C499A00876A215483b525",
+    "registered": true,
+    "registeredAt": "2026-06-30T14:35:57.430Z"
   }
 ]

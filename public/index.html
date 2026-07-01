@@ -119,6 +119,12 @@
             max-width: 600px;
             margin: 0.5rem auto 2rem;
         }
+        .hero .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
         .hero .btn-primary {
             display: inline-block;
             background: #6ee7b7;
@@ -135,6 +141,24 @@
         .hero .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(110, 231, 183, 0.25);
+        }
+        .hero .btn-secondary {
+            display: inline-block;
+            background: #1a2a44;
+            color: #7bb3ff;
+            font-weight: 600;
+            padding: 0.8rem 2.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid #2a4a66;
+            font-size: 1rem;
+        }
+        .hero .btn-secondary:hover {
+            background: #2a4a66;
+            color: #a0c0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(122, 179, 255, 0.15);
         }
 
         .mission {
@@ -488,6 +512,10 @@
             .arch-arrow {
                 transform: rotate(90deg);
             }
+            .hero .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -507,7 +535,7 @@
                 <a href="#artist-dashboard">Artist Dashboard</a>
                 <a href="#dashboard">Dashboard</a>
                 <a href="https://github.com/jaguard2021/attentionpool" target="_blank">GitHub</a>
-                <a href="YOUR_YOUTUBE_LINK" target="_blank" class="btn-demo">🎥 Demo</a>
+                <a href="https://www.youtube.com/watch?v=qdkgg1VlmiI" target="_blank" class="btn-demo">🎥 Demo</a>
                 <a href="#register-artist" class="btn-nav">Go →</a>
             </nav>
         </header>
@@ -518,7 +546,10 @@
             <h1>Verified Attention <span>Infrastructure</span></h1>
             <p class="subtitle">Automatically reward creators and users for <strong>genuine engagement</strong> — starting with music, expanding to all open-source content.</p>
             <p class="tagline">No bots. No seek. No spam. Only verified attention.</p>
-            <a href="#register-artist" class="btn-primary">🎵 Join the Network</a>
+            <div class="btn-group">
+                <a href="#register-artist" class="btn-primary">🎵 Join the Network</a>
+                <a href="https://www.youtube.com/watch?v=qdkgg1VlmiI" target="_blank" class="btn-secondary">▶ Watch Demo</a>
+            </div>
         </section>
 
         <!-- MISSION -->
