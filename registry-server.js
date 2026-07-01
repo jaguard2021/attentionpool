@@ -7,11 +7,14 @@ const { ethers } = require('ethers');
 const app = express();
 const PORT = 3001;
 
+// =============================================
+// MIDDLEWARE
+// =============================================
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(__dirname)); // Serve static files from root
 
 // =============================================
-// FILE PATHS
+// FILE PATHS (Root folder)
 // =============================================
 const ARTISTS_FILE = path.join(__dirname, 'artists.json');
 const LISTENERS_FILE = path.join(__dirname, 'listeners.json');
@@ -75,7 +78,7 @@ app.post('/api/register-listener', (req, res) => {
 });
 
 // =============================================
-// REGISTER SONG — SHA-256 TRACK ID
+// REGISTER SONG — SHA-256 Track ID
 // =============================================
 app.post('/api/register-song', (req, res) => {
     const { title, artist, artistWallet } = req.body;
@@ -95,7 +98,6 @@ app.post('/api/register-song', (req, res) => {
         return res.status(400).json({ error: 'Song already registered' });
     }
 
-    // Generate Track ID using SHA-256 (stable, collision-resistant)
     const trackId = crypto
         .createHash('sha256')
         .update(`${title}:${artist}`)
@@ -154,7 +156,6 @@ app.get('/api/stats', (req, res) => {
         history.forEach(h => {
             totalPaid += parseFloat(h.amountCreator || 0) + parseFloat(h.amountListener || 0);
         });
-        // Average attention score
         let totalScore = 0;
         let scoredPlays = 0;
         history.forEach(h => {
@@ -192,7 +193,6 @@ app.get('/api/artist-stats/:wallet', (req, res) => {
             totalRoyalties += parseFloat(p.amountCreator || 0);
         });
         const songs = new Set(plays.map(p => p.title));
-        // Average attention score for this artist
         let totalScore = 0;
         let scoredPlays = 0;
         plays.forEach(p => {
