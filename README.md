@@ -364,7 +364,12 @@ Any content with measurable engagement can become monetizable.
 
 # Demo
 
-Demo Video: [Watch AttentionPool in Action](https://www.youtube.com/watch?v=qdkgg1VlmiI)
+## 🎥 Demo
+
+
+- **Demo Video:** [Click here to watch](https://www.youtube.com/watch?v=qdkgg1VlmiI)
+
+- **Live Website:** [Click here to visit](https://jaguard2021.github.io/attentionpool/)
 
 GitHub Repository:
 https://github.com/jaguard2021/attentionpool
